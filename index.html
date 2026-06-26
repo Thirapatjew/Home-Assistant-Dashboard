@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard ฟาร์มไฮโดรโปนิกส์</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; font-family: 'Sarabun', 'Segoe UI', sans-serif; background: #f8fafc; color: #1a1a1a; font-size: 14px; }
+
+  .shell { display: flex; height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar { width: 220px; flex-shrink: 0; background: #111827; display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 10; }
+  .sidebar-logo { padding: 18px 16px 14px; border-bottom: 1px solid #1f2937; display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, #16a34a, #059669); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .logo-text { line-height: 1.2; }
+  .logo-text strong { font-size: 13px; color: #f9fafb; display: block; }
+  .logo-text span { font-size: 10px; color: #6b7280; }
+
+  .sidebar-date { padding: 8px 16px; font-size: 10px; color: #4b5563; border-bottom: 1px solid #1f2937; }
+
+  .nav-section { padding: 10px 0 4px; }
+  .nav-section-label { padding: 4px 16px 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #4b5563; font-weight: 600; }
+  .nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 14px 8px 16px; cursor: pointer; transition: background .15s; border-left: 3px solid transparent; text-decoration: none; color: #9ca3af; font-size: 13px; line-height: 1.3; }
+  .nav-item:hover { background: #1f2937; color: #e5e7eb; }
+  .nav-item.active { background: #1f2937; color: #fff; border-left-color: #22c55e; }
+  .nav-item .num { font-size: 10px; font-weight: 700; width: 18px; height: 18px; background: #1f2937; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #6b7280; flex-shrink: 0; font-family: monospace; }
+  .nav-item.active .num { background: #16a34a; color: #fff; }
+  .nav-item .icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
+
+  .sidebar-footer { margin-top: auto; padding: 12px 16px; border-top: 1px solid #1f2937; font-size: 10px; color: #374151; }
+
+  .env-strip { padding: 6px 16px 10px; border-top: 1px solid #1f2937; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .env-chip { background: #1f2937; border-radius: 6px; padding: 5px 7px; display: flex; flex-direction: column; gap: 1px; }
+  .env-chip .name { font-size: 9px; color: #6b7280; }
+  .env-chip .value { font-size: 13px; font-weight: 700; color: #e5e7eb; line-height: 1; }
+  .env-chip .unit { font-size: 9px; color: #6b7280; }
+  .ok { color: #22c55e !important; } .warn { color: #f59e0b !important; }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100vh; }
+  .topbar { height: 48px; background: #fff; border-bottom: 1px solid #e4e6ea; display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; }
+  .topbar-title { font-size: 14px; font-weight: 600; color: #1a1a1a; flex: 1; }
+  .topbar-breadcrumb { font-size: 12px; color: #6b7280; }
+
+  .kpi-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; border-bottom: 1px solid #e4e6ea; background: #fff; flex-shrink: 0; }
+  .kpi-cell { padding: 12px 16px; border-right: 1px solid #f0f1f3; }
+  .kpi-cell:last-child { border-right: none; }
+  .kpi-cell .lbl { font-size: 10px; color: #9ca3af; margin-bottom: 4px; text-transform: uppercase; }
+  .kpi-cell .val { font-size: 20px; font-weight: 800; line-height: 1.1; }
+  .kpi-cell .unit { font-size: 11px; color: #9ca3af; margin-left: 2px; }
+  .c-green { color: #16a34a; } .c-blue { color: #1d4ed8; } .c-amber { color: #b45309; } .c-red { color: #dc2626; } .c-teal { color: #0e7490; } .c-gray { color: #374151; }
+
+  .content-area { flex: 1; position: relative; min-height: 0; }
+  .content-frame { width: 100%; height: 100%; border: none; display: block; background: #f8fafc; }
+
+  .home-panel { position: absolute; inset: 0; overflow-y: auto; padding: 24px; background: #f8fafc; display: none; scrollbar-width: none; }
+  .home-panel::-webkit-scrollbar { display: none; }
+  .home-panel.visible { display: block; }
+
+  .page-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .page-card { background: #fff; border-radius: 12px; border: 1px solid #e4e6ea; padding: 16px; cursor: pointer; transition: .15s; display: flex; align-items: flex-start; gap: 12px; text-decoration: none; color: inherit; }
+  .page-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); transform: translateY(-1px); }
+  .page-card .card-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .page-card .card-body { flex: 1; min-width: 0; }
+  .page-card .card-num { font-size: 10px; color: #9ca3af; font-weight: 600; text-transform: uppercase; }
+  .page-card .card-title { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-top: 1px; }
+  .page-card .card-desc { font-size: 11px; color: #6b7280; margin-top: 3px; line-height: 1.4; }
+
+  .bg-green { background: #dcfce7; } .bg-emerald { background: #d1fae5; } .bg-blue { background: #dbeafe; } .bg-purple { background: #ede9fe; } .bg-cyan { background: #cffafe; } .bg-teal { background: #ccfbf1; } .bg-red { background: #fee2e2; } .bg-amber { background: #fef3c7; } .bg-lime { background: #ecfccb; } .bg-sky { background: #e0f2fe; }
+
+  .alert-box { background: #fff; border-radius: 12px; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; padding: 12px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .alert-box .icon { font-size: 18px; }
+  .alert-box .text { font-size: 12px; color: #374151; }
+  .alert-box .text strong { display: block; color: #92400e; margin-bottom: 2px; }
+  .section-label { font-size: 11px; color: #6b7280; text-transform: uppercase; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🌿</div>
+      <div class="logo-text"><strong>ไฮโดรฟาร์ม</strong><span>Dashboard System</span></div>
+    </div>
+    <div class="sidebar-date" id="sideDate">กำลังโหลด...</div>
+
+    <nav class="nav-section">
+      <div class="nav-section-label">หน้าหลัก</div>
+      <div class="nav-item active" data-page="home" onclick="navigate('home', this)"><span class="icon">🏠</span><span>ภาพรวมฟาร์ม</span></div>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-section-label">การปลูก</div>
+      <div class="nav-item" data-page="01_รอบการปลูก.html" onclick="navigate('01_รอบการปลูก.html', this)"><span class="num">01</span><span>รอบการปลูก</span></div>
+      <div class="nav-item" data-page="02_เพาะกล้า.html" onclick="navigate('02_เพาะกล้า.html', this)"><span class="num">02</span><span>เพาะกล้า</span></div>
+      <div class="nav-item" data-page="03_ย้ายลงทาวเวอร์.html" onclick="navigate('03_ย้ายลงทาวเวอร์.html', this)"><span class="num">03</span><span>ย้ายลงทาวเวอร์</span></div>
+      <div class="nav-item" data-page="04_แผนผัง-Zone.html" onclick="navigate('04_แผนผัง-Zone.html', this)"><span class="num">04</span><span>แผนผัง Zone</span></div>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-section-label">การดูแล</div>
+      <div class="nav-item" data-page="05_บันทึกการดูแล.html" onclick="navigate('05_บันทึกการดูแล.html', this)"><span class="num">05</span><span>บันทึกดูแลรายวัน</span></div>
+      <div class="nav-item" data-page="06_บันทึกการเจริญเติบโต.html" onclick="navigate('06_บันทึกการเจริญเติบโต.html', this)"><span class="num">06</span><span>การเจริญเติบโต</span></div>
+      <div class="nav-item" data-page="07_ปัญหาและโรคพืช.html" onclick="navigate('07_ปัญหาและโรคพืช.html', this)"><span class="num">07</span><span>ปัญหา / โรคพืช</span></div>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-section-label">ผลผลิต & ขาย</div>
+      <div class="nav-item" data-page="08_เก็บเกี่ยว.html" onclick="navigate('08_เก็บเกี่ยว.html', this)"><span class="num">08</span><span>เก็บเกี่ยว</span></div>
+      <div class="nav-item" data-page="09_สรุปผลผลิต.html" onclick="navigate('09_สรุปผลผลิต.html', this)"><span class="num">09</span><span>สรุปผลผลิต</span></div>
+      <div class="nav-item" data-page="10_ฐานข้อมูล-สต็อก-ยอดขาย.html" onclick="navigate('10_ฐานข้อมูล-สต็อก-ยอดขาย.html', this)"><span class="num">10</span><span>ฐานข้อมูล / ยอดขาย</span></div>
+    </nav>
+
+    <div class="env-strip">
+      <div class="env-chip"><span class="name">pH</span><span class="value ok">6.1</span></div>
+      <div class="env-chip"><span class="name">EC</span><span class="value ok">1.2 <span class="unit">mS</span></span></div>
+      <div class="env-chip"><span class="name">น้ำ</span><span class="value warn">27.5<span class="unit">°C</span></span></div>
+      <div class="env-chip"><span class="name">อากาศ</span><span class="value warn">31<span class="unit">°C</span></span></div>
+      <div class="env-chip" style="grid-column: span 2;"><span class="name">ความชื้น</span><span class="value ok">70 <span class="unit">%</span></span></div>
+    </div>
+
+    <div class="sidebar-footer">อัปเดตล่าสุด 23/06/2026 · 09:00<br>Zone 1 · รอบที่ 1</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar"><span class="topbar-title" id="topTitle">ภาพรวมฟาร์ม</span><span class="topbar-breadcrumb" id="topCrumb">Dashboard / หน้าหลัก</span></div>
+
+    <div class="kpi-bar">
+      <div class="kpi-cell"><div class="lbl">รอบปลูกทั้งหมด</div><div class="val c-gray">20 <span class="unit">รอบ</span></div></div>
+      <div class="kpi-cell"><div class="lbl">ต้นเก็บได้รอบ 1</div><div class="val c-green">777 <span class="unit">ต้น</span></div></div>
+      <div class="kpi-cell"><div class="lbl">ผลผลิตรวม</div><div class="val c-teal">453.9 <span class="unit">กก.</span></div></div>
+      <div class="kpi-cell"><div class="lbl">รายได้รวม</div><div class="val c-green">1,480 <span class="unit">บ.</span></div></div>
+      <div class="kpi-cell"><div class="lbl">ปัญหาที่พบ</div><div class="val c-amber">1 <span class="unit">รายการ</span></div></div>
+      <div class="kpi-cell"><div class="lbl">สต็อกคงเหลือ</div><div class="val c-red">0 <span class="unit">ต้น</span></div></div>
+    </div>
+
+    <div class="content-area">
+      <div class="home-panel visible" id="homePanel">
+        <div class="alert-box"><span class="icon">⚠️</span><div class="text"><strong>แจ้งเตือน: ใบเหลือง Z1-C2 (รอบ 1)</strong>EC สูง + อากาศร้อน 31°C · 8 ต้นได้รับผลกระทบ · ระดับต่ำ · รอดูผล</div></div>
+
+        <div class="section-label">สถานะรอบปลูก — ณ วันที่ 23/06/2026</div>
+        <div class="page-grid" style="margin-bottom:20px;">
+          <div style="background:#fff;border-radius:12px;border:1px solid #e4e6ea;padding:14px;cursor:pointer;" onclick="navigate('01_รอบการปลูก.html')">
+            <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">สถานะรอบ</div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:8px;height:8px;border-radius:50%;background:#22c55e;"></span>รอบ 1 — เก็บแล้ว <span style="margin-left:auto;color:#16a34a;font-weight:600;">Zone 1</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;"></span>รอบ 2 — กำลังปลูก <span style="margin-left:auto;color:#92400e;font-weight:600;">Zone 1</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;"></span>รอบ 3 — กำลังปลูก <span style="margin-left:auto;color:#92400e;font-weight:600;">Zone 2</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;"></span>รอบ 4 — กำลังปลูก <span style="margin-left:auto;color:#92400e;font-weight:600;">Zone 3</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:8px;height:8px;border-radius:50%;background:#6366f1;"></span>รอบ 5 — กำลังเพาะ <span style="margin-left:auto;color:#4338ca;font-weight:600;">Zone 4</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;"><span style="width:8px;height:8px;border-radius:50%;background:#d1d5db;"></span>รอบ 6–20 — วางแผน</div>
+            </div>
+          </div>
+          <div style="background:#fff;border-radius:12px;border:1px solid #e4e6ea;padding:14px;">
+            <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">ยอดขายล่าสุด 23/06/2026</div>
+            <div style="display:flex;flex-direction:column;gap:4px;font-size:12px;">
+              <div style="display:flex;"><span style="flex:1;">กรีนโอ๊ค + เรดโอ๊ค</span><span style="font-weight:600;">160 บ.</span></div>
+              <div style="display:flex;"><span style="flex:1;">บัตเตอร์เฮด + กรีนโครอล</span><span style="font-weight:600;">160 บ.</span></div>
+              <div style="border-top:1px solid #f0f1f3;margin-top:4px;padding-top:4px;display:flex;"><span style="flex:1;font-weight:600;">รวม 8 ชนิด × 8 ต้น</span><span style="font-weight:700;color:#16a34a;">640 บ.</span></div>
+              <div style="font-size:11px;color:#6b7280;margin-top:2px;">ลูกค้า: VPPARK (คุณเมี๊ยว)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">ทุกหน้าในระบบ (คลิกเพื่อเปิด)</div>
+        <div class="page-grid">
+          <div class="page-card" onclick="navigate('01_รอบการปลูก.html')"><div class="card-icon bg-green">🌱</div><div class="card-body"><div class="card-num">หน้า 01</div><div class="card-title">รอบการปลูก</div><div class="card-desc">แผน 20 รอบ · วันเพาะ ย้าย เก็บ</div></div></div>
+          <div class="page-card" onclick="navigate('02_เพาะกล้า.html')"><div class="card-icon bg-emerald">🌿</div><div class="card-body"><div class="card-num">หน้า 02</div><div class="card-title">เพาะกล้า</div><div class="card-desc">จำนวนเมล็ด · อัตรางอก · pH/EC</div></div></div>
+          <div class="page-card" onclick="navigate('03_ย้ายลงทาวเวอร์.html')"><div class="card-icon bg-blue">🏗️</div><div class="card-body"><div class="card-num">หน้า 03</div><div class="card-title">ย้ายลงทาวเวอร์</div><div class="card-desc">จำนวนย้าย · คัดทิ้ง · ตำแหน่ง</div></div></div>
+          <div class="page-card" onclick="navigate('04_แผนผัง-Zone.html')"><div class="card-icon bg-purple">🗺️</div><div class="card-body"><div class="card-num">หน้า 04</div><div class="card-title">แผนผัง Zone</div><div class="card-desc">4 Zones · 36 ตำแหน่งปลูก</div></div></div>
+          <div class="page-card" onclick="navigate('05_บันทึกการดูแล.html')"><div class="card-icon bg-cyan">💧</div><div class="card-body"><div class="card-num">หน้า 05</div><div class="card-title">บันทึกการดูแล</div><div class="card-desc">pH / EC / ปุ๋ย / น้ำ รายวัน</div></div></div>
+          <div class="page-card" onclick="navigate('06_บันทึกการเจริญเติบโต.html')"><div class="card-icon bg-lime">📏</div><div class="card-body"><div class="card-num">หน้า 06</div><div class="card-title">การเจริญเติบโต</div><div class="card-desc">ความสูง · ใบ · ราก · คะแนน</div></div></div>
+          <div class="page-card" onclick="navigate('07_ปัญหาและโรคพืช.html')"><div class="card-icon bg-red">🚨</div><div class="card-body"><div class="card-num">หน้า 07</div><div class="card-title">ปัญหา / โรคพืช</div><div class="card-desc">อาการ · สาเหตุ · วิธีแก้</div></div></div>
+          <div class="page-card" onclick="navigate('08_เก็บเกี่ยว.html')"><div class="card-icon bg-emerald">🥬</div><div class="card-body"><div class="card-num">หน้า 08</div><div class="card-title">เก็บเกี่ยว</div><div class="card-desc">ผลผลิตจริง · น้ำหนัก · เกรด</div></div></div>
+          <div class="page-card" onclick="navigate('09_สรุปผลผลิต.html')"><div class="card-icon bg-teal">📊</div><div class="card-body"><div class="card-num">หน้า 09</div><div class="card-title">สรุปผลผลิต</div><div class="card-desc">KPI รวม · อัตรารอด · รายได้</div></div></div>
+          <div class="page-card" onclick="navigate('10_ฐานข้อมูล-สต็อก-ยอดขาย.html')"><div class="card-icon bg-sky">📦</div><div class="card-body"><div class="card-num">หน้า 10</div><div class="card-title">ฐานข้อมูล / ยอดขาย</div><div class="card-desc">พันธุ์ผัก · สต็อก · Dropdown ref</div></div></div>
+        </div>
+      </div>
+
+      <iframe class="content-frame" id="contentFrame" style="display:none;" src="about:blank"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  const now = new Date();
+  const days = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์'];
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  document.getElementById('sideDate').textContent = `วัน${days[now.getDay()]}ที่ ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()+543}`;
+
+  const pageMeta = {
+    'home':                         ['ภาพรวมฟาร์ม',        'Dashboard / หน้าหลัก'],
+    '01_รอบการปลูก.html':           ['รอบการปลูก',         'Dashboard / 01 รอบการปลูก'],
+    '02_เพาะกล้า.html':             ['เพาะกล้า',           'Dashboard / 02 เพาะกล้า'],
+    '03_ย้ายลงทาวเวอร์.html':        ['ย้ายลงทาวเวอร์',      'Dashboard / 03 ย้ายลงทาวเวอร์'],
+    '04_แผนผัง-Zone.html':           ['แผนผัง Zone',         'Dashboard / 04 แผนผัง Zone'],
+    '05_บันทึกการดูแล.html':          ['บันทึกการดูแล',       'Dashboard / 05 บันทึกการดูแล'],
+    '06_บันทึกการเจริญเติบโต.html':   ['การเจริญเติบโต',      'Dashboard / 06 การเจริญเติบโต'],
+    '07_ปัญหาและโรคพืช.html':        ['ปัญหา / โรคพืช',     'Dashboard / 07 ปัญหาและโรคพืช'],
+    '08_เก็บเกี่ยว.html':            ['เก็บเกี่ยว',          'Dashboard / 08 เก็บเกี่ยว'],
+    '09_สรุปผลผลิต.html':            ['สรุปผลผลิต',          'Dashboard / 09 สรุปผลผลิต'],
+    '10_ฐานข้อมูล-สต็อก-ยอดขาย.html':['ฐานข้อมูล / ยอดขาย', 'Dashboard / 10 ฐานข้อมูล']
+  };
+
+  function navigate(page, el) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    let activeNav = el || document.querySelector(`.nav-item[data-page="${page}"]`);
+    if (activeNav) activeNav.classList.add('active');
+
+    const meta = pageMeta[page] || ['', ''];
+    document.getElementById('topTitle').textContent = meta[0];
+    document.getElementById('topCrumb').textContent = meta[1];
+
+    const home = document.getElementById('homePanel');
+    const frame = document.getElementById('contentFrame');
+
+    if (page === 'home') {
+      home.classList.add('visible');
+      frame.style.display = 'none';
+      frame.src = 'about:blank';
+    } else {
+      home.classList.remove('visible');
+      frame.style.display = 'block';
+      frame.src = page;
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>06 บันทึกการเจริญเติบโต — ฟาร์มไฮโดรโปนิกส์</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sarabun', 'Segoe UI', sans-serif; background: #f5f6f8; color: #1a1a1a; font-size: 14px; }
+  .page-header { background: #fff; border-bottom: 1px solid #e4e6ea; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .page-header .icon { width: 32px; height: 32px; background: #15803d; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; flex-shrink: 0; }
+  .page-header h1 { font-size: 16px; font-weight: 600; }
+  .page-header .sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .updated { margin-left: auto; font-size: 11px; color: #9ca3af; background: #f9fafb; border: 1px solid #e4e6ea; border-radius: 6px; padding: 4px 10px; }
+  .container { padding: 20px 24px; }
+
+  .table-wrap { background: #fff; border-radius: 12px; border: 1px solid #e4e6ea; overflow: hidden; margin-bottom: 20px; }
+  .table-title { padding: 14px 18px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #e4e6ea; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { background: #f9fafb; padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #e4e6ea; white-space: nowrap; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid #f0f1f3; color: #374151; vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+
+  .zone-tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 600; border: 1px solid; }
+  .zone-1 { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+
+  .score-bar { display: flex; gap: 3px; align-items: center; }
+  .score-dot { width: 10px; height: 10px; border-radius: 2px; }
+  .dot-on { background: #16a34a; }
+  .dot-off { background: #e5e7eb; }
+  .score-num { font-size: 12px; font-weight: 700; color: #16a34a; margin-left: 4px; }
+
+  .leaf-green { display: inline-block; padding: 2px 8px; border-radius: 20px; background: #dcfce7; color: #166534; font-size: 11px; font-weight: 500; }
+  .root-white { display: inline-block; padding: 2px 8px; border-radius: 20px; background: #f3f4f6; color: #374151; font-size: 11px; font-weight: 500; }
+
+  .pos-tag { font-family: monospace; background: #f3f4f6; color: #374151; padding: 2px 6px; border-radius: 4px; font-size: 11px; border: 1px solid #e4e6ea; }
+  .note-row { background: #f0fdf4; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="icon">📏</div>
+  <div>
+    <h1>06 บันทึกการเจริญเติบโต</h1>
+    <div class="sub">วัดความสูง จำนวนใบ ความกว้างทรงพุ่ม สีใบ ราก และคะแนนความสมบูรณ์</div>
+  </div>
+  <div class="updated">อัปเดต 23/06/2026</div>
+</div>
+
+<div class="container">
+  <div class="table-wrap">
+    <div class="table-title">📐 บันทึกการวัดการเจริญเติบโตรายตำแหน่ง</div>
+    <table>
+      <thead>
+        <tr>
+          <th>วันที่วัด</th>
+          <th>รอบ</th>
+          <th>Zone</th>
+          <th>รหัสตำแหน่ง</th>
+          <th>อายุหลังย้าย (วัน)</th>
+          <th>ความสูงต้น (cm)</th>
+          <th>จำนวนใบ</th>
+          <th>ความกว้างทรงพุ่ม (cm)</th>
+          <th>สีใบ</th>
+          <th>ราก</th>
+          <th>คะแนนสมบูรณ์ (1–5)</th>
+          <th>หมายเหตุ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="note-row">
+          <td>23/06/2026</td>
+          <td>1</td>
+          <td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td><span class="pos-tag">Z1-L1</span></td>
+          <td style="text-align:center;"><strong>37</strong></td>
+          <td style="text-align:center;"><strong>18</strong></td>
+          <td style="text-align:center;"><strong>12</strong></td>
+          <td style="text-align:center;"><strong>22</strong></td>
+          <td><span class="leaf-green">เขียวปกติ</span></td>
+          <td><span class="root-white">ขาวปกติ</span></td>
+          <td>
+            <div class="score-bar">
+              <div class="score-dot dot-on"></div>
+              <div class="score-dot dot-on"></div>
+              <div class="score-dot dot-on"></div>
+              <div class="score-dot dot-on"></div>
+              <div class="score-dot dot-on"></div>
+              <span class="score-num">5/5</span>
+            </div>
+          </td>
+          <td>ตัวอย่าง</td>
+        </tr>
+        <tr style="background:#fafafa;">
+          <td colspan="12" style="text-align:center;padding:14px;font-style:italic;font-size:12px;color:#9ca3af;">— เพิ่มบันทึกใหม่ได้ที่นี่ —</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ตารางอ้างอิงมาตรฐาน -->
+  <div class="table-wrap">
+    <div class="table-title">📊 เกณฑ์คะแนนความสมบูรณ์ (1–5)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>คะแนน</th>
+          <th>ความหมาย</th>
+          <th>ลักษณะใบ</th>
+          <th>ลักษณะราก</th>
+          <th>การจัดการที่แนะนำ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span style="font-weight:700;color:#16a34a;font-size:15px;">5</span></td>
+          <td>ดีเยี่ยม</td>
+          <td>เขียวสด แน่น</td>
+          <td>ขาว หนาแน่น</td>
+          <td>ดูแลตามปกติ</td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:700;color:#84cc16;font-size:15px;">4</span></td>
+          <td>ดี</td>
+          <td>เขียวดี มีสีเล็กน้อย</td>
+          <td>ขาว ปกติ</td>
+          <td>ติดตามต่อ</td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:700;color:#f59e0b;font-size:15px;">3</span></td>
+          <td>พอใช้</td>
+          <td>เหลืองบางส่วน</td>
+          <td>มีสีน้ำตาลเล็กน้อย</td>
+          <td>ตรวจ EC และ pH</td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:700;color:#ef4444;font-size:15px;">2</span></td>
+          <td>แย่</td>
+          <td>เหลืองมาก / แห้ง</td>
+          <td>น้ำตาล / เน่า</td>
+          <td>ปรับ EC เปลี่ยนน้ำ</td>
+        </tr>
+        <tr>
+          <td><span style="font-weight:700;color:#7f1d1d;font-size:15px;">1</span></td>
+          <td>เสีย</td>
+          <td>ตาย / โรค</td>
+          <td>ดำ / เน่า</td>
+          <td>คัดทิ้ง บันทึกปัญหา</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+if (window.self === window.top) {
+  var b = document.createElement('a');
+  b.href = 'index.html';
+  b.style = 'position:fixed;bottom:18px;right:18px;background:#111827;color:#fff;padding:9px 18px;border-radius:24px;font-size:12px;text-decoration:none;z-index:9999;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(0,0,0,.25);font-family:Sarabun,sans-serif;';
+  b.innerHTML = '🏠 กลับหน้าหลัก';
+  document.body.appendChild(b);
+}
+</script>
+</body>
+</html>
