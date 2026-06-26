@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>05 บันทึกการดูแล — ฟาร์มไฮโดรโปนิกส์</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sarabun', 'Segoe UI', sans-serif; background: #f5f6f8; color: #1a1a1a; font-size: 14px; }
+  .page-header { background: #fff; border-bottom: 1px solid #e4e6ea; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .page-header .icon { width: 32px; height: 32px; background: #0369a1; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; flex-shrink: 0; }
+  .page-header h1 { font-size: 16px; font-weight: 600; }
+  .page-header .sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .updated { margin-left: auto; font-size: 11px; color: #9ca3af; background: #f9fafb; border: 1px solid #e4e6ea; border-radius: 6px; padding: 4px 10px; }
+  .container { padding: 20px 24px; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+  .kpi { background: #fff; border-radius: 10px; border: 1px solid #e4e6ea; padding: 12px 14px; }
+  .kpi .lbl { font-size: 11px; color: #6b7280; margin-bottom: 4px; }
+  .kpi .val { font-size: 20px; font-weight: 700; }
+  .kpi .unit { font-size: 11px; color: #9ca3af; margin-left: 2px; }
+  .c-blue { color: #1d4ed8; } .c-green { color: #16a34a; }
+  .c-amber { color: #b45309; } .c-red { color: #dc2626; } .c-purple { color: #7c3aed; }
+
+  .env-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+  .env-card { background: #fff; border-radius: 10px; border: 1px solid #e4e6ea; padding: 14px 14px 10px; }
+  .env-card .icon { font-size: 18px; margin-bottom: 6px; }
+  .env-card .name { font-size: 11px; color: #6b7280; margin-bottom: 4px; }
+  .env-card .value { font-size: 22px; font-weight: 700; }
+  .env-card .unit { font-size: 11px; color: #9ca3af; }
+  .env-card .bar-wrap { margin-top: 8px; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden; }
+  .env-card .bar-fill { height: 100%; border-radius: 2px; }
+  .env-card .range { font-size: 10px; color: #9ca3af; margin-top: 4px; }
+  .ok { color: #16a34a; } .warn { color: #b45309; }
+
+  .table-wrap { background: #fff; border-radius: 12px; border: 1px solid #e4e6ea; overflow: hidden; }
+  .table-title { padding: 14px 18px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #e4e6ea; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { background: #f9fafb; padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #e4e6ea; white-space: nowrap; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid #f0f1f3; color: #374151; vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+
+  .zone-tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 600; border: 1px solid; }
+  .zone-1 { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 500; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 6px; background: #f3f4f6; color: #374151; margin: 1px; }
+  .note-row { background: #fffbeb; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="icon">💧</div>
+  <div>
+    <h1>05 บันทึกการดูแล</h1>
+    <div class="sub">บันทึก pH / EC / เติมน้ำ / เติมปุ๋ย / ล้างระบบ ประจำวัน</div>
+  </div>
+  <div class="updated">อัปเดต 23/06/2026</div>
+</div>
+
+<div class="container">
+
+  <!-- Snapshot สภาพแวดล้อมล่าสุด -->
+  <p style="font-size:11px;color:#6b7280;margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em;">📡 ค่าสภาพแวดล้อมล่าสุด — บันทึก 23/06/2026 เวลา 09:00</p>
+  <div class="env-cards">
+    <div class="env-card">
+      <div class="icon">⚗️</div>
+      <div class="name">pH น้ำ</div>
+      <div class="value ok">6.1</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:55%;background:#2563eb;"></div></div>
+      <div class="range">เหมาะสม 5.8–6.5</div>
+    </div>
+    <div class="env-card">
+      <div class="icon">⚡</div>
+      <div class="name">EC</div>
+      <div class="value ok">1.2 <span class="unit">mS/cm</span></div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:60%;background:#10b981;"></div></div>
+      <div class="range">เหมาะสม 1.2–1.8</div>
+    </div>
+    <div class="env-card">
+      <div class="icon">🌡️</div>
+      <div class="name">อุณหภูมิน้ำ</div>
+      <div class="value warn">27.5 <span class="unit">°C</span></div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:70%;background:#f59e0b;"></div></div>
+      <div class="range">ดี &lt; 28°C</div>
+    </div>
+    <div class="env-card">
+      <div class="icon">🌤️</div>
+      <div class="name">อุณหภูมิอากาศ</div>
+      <div class="value warn">31 <span class="unit">°C</span></div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:77%;background:#ef4444;"></div></div>
+      <div class="range">สูงเล็กน้อย</div>
+    </div>
+    <div class="env-card">
+      <div class="icon">💦</div>
+      <div class="name">ความชื้นอากาศ</div>
+      <div class="value ok">70 <span class="unit">%</span></div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:70%;background:#6366f1;"></div></div>
+      <div class="range">เหมาะสม 60–80%</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-title">📋 ตารางบันทึกการดูแลรายวัน</div>
+    <table>
+      <thead>
+        <tr>
+          <th>วันที่</th>
+          <th>เวลา</th>
+          <th>รอบ</th>
+          <th>Zone</th>
+          <th>pH</th>
+          <th>EC (mS)</th>
+          <th>อุณหภูมิน้ำ (°C)</th>
+          <th>อุณหภูมิอากาศ (°C)</th>
+          <th>ความชื้น (%)</th>
+          <th>ระดับน้ำ</th>
+          <th>เติมน้ำ (ล.)</th>
+          <th>ปุ๋ย A (ml)</th>
+          <th>ปุ๋ย B (ml)</th>
+          <th>ปรับ pH</th>
+          <th>งานที่ทำ</th>
+          <th>ผู้บันทึก</th>
+          <th>หมายเหตุ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="note-row">
+          <td>23/06/2026</td>
+          <td>09:00</td>
+          <td>1</td>
+          <td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td><strong>6.1</strong></td>
+          <td><strong>1.2</strong></td>
+          <td>27.5</td>
+          <td>31</td>
+          <td>70</td>
+          <td><span class="badge badge-blue">ปกติ</span></td>
+          <td>50</td>
+          <td>200</td>
+          <td>200</td>
+          <td><span class="badge badge-amber">pH Down 20 ml</span></td>
+          <td><span class="pill">เติมปุ๋ย A/B</span></td>
+          <td>—</td>
+          <td>ตัวอย่าง</td>
+        </tr>
+        <!-- แถวว่างสำหรับกรอกเพิ่ม -->
+        <tr style="background:#fafafa;color:#d1d5db;">
+          <td colspan="17" style="text-align:center;padding:14px;font-style:italic;font-size:12px;color:#9ca3af;">— เพิ่มบันทึกใหม่ได้ที่นี่ —</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+if (window.self === window.top) {
+  var b = document.createElement('a');
+  b.href = 'index.html';
+  b.style = 'position:fixed;bottom:18px;right:18px;background:#111827;color:#fff;padding:9px 18px;border-radius:24px;font-size:12px;text-decoration:none;z-index:9999;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(0,0,0,.25);font-family:Sarabun,sans-serif;';
+  b.innerHTML = '🏠 กลับหน้าหลัก';
+  document.body.appendChild(b);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08 เก็บเกี่ยว — ฟาร์มไฮโดรโปนิกส์</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sarabun', 'Segoe UI', sans-serif; background: #f5f6f8; color: #1a1a1a; font-size: 14px; }
+  .page-header { background: #fff; border-bottom: 1px solid #e4e6ea; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .page-header .icon { width: 32px; height: 32px; background: #16a34a; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; flex-shrink: 0; }
+  .page-header h1 { font-size: 16px; font-weight: 600; }
+  .page-header .sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .updated { margin-left: auto; font-size: 11px; color: #9ca3af; background: #f9fafb; border: 1px solid #e4e6ea; border-radius: 6px; padding: 4px 10px; }
+  .container { padding: 20px 24px; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+  .kpi { background: #fff; border-radius: 10px; border: 1px solid #e4e6ea; padding: 12px 14px; }
+  .kpi .lbl { font-size: 11px; color: #6b7280; margin-bottom: 4px; }
+  .kpi .val { font-size: 22px; font-weight: 700; }
+  .kpi .unit { font-size: 11px; color: #9ca3af; margin-left: 2px; }
+  .c-green { color: #16a34a; } .c-blue { color: #1d4ed8; }
+  .c-amber { color: #b45309; } .c-red { color: #dc2626; } .c-gray { color: #374151; }
+
+  .table-wrap { background: #fff; border-radius: 12px; border: 1px solid #e4e6ea; overflow: hidden; margin-bottom: 20px; }
+  .table-title { padding: 14px 18px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #e4e6ea; display: flex; justify-content: space-between; align-items: center; }
+  .table-title .sub { font-size: 12px; color: #6b7280; font-weight: 400; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { background: #f9fafb; padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #e4e6ea; white-space: nowrap; }
+  thead th.right { text-align: right; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid #f0f1f3; color: #374151; vertical-align: middle; }
+  tbody td.right { text-align: right; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+  tfoot td { padding: 10px 12px; font-weight: 700; color: #1a1a1a; background: #f9fafb; border-top: 2px solid #e4e6ea; }
+  tfoot td.right { text-align: right; }
+
+  .badge { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+  .badge-a { background: #dcfce7; color: #166534; }
+  .badge-b { background: #fef3c7; color: #92400e; }
+  .badge-waste { background: #fee2e2; color: #991b1b; }
+
+  .zone-tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 600; border: 1px solid; }
+  .zone-1 { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+
+  .surv-bar { display: flex; align-items: center; gap: 6px; }
+  .bar-bg { flex: 1; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; min-width: 60px; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-high { background: #22c55e; }
+  .bar-mid { background: #f59e0b; }
+  .pct { font-size: 11px; font-weight: 600; }
+  .pct-high { color: #166534; }
+  .pct-mid { color: #92400e; }
+
+  .highlight-row td { background: #f0fdf4; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="icon">🥬</div>
+  <div>
+    <h1>08 เก็บเกี่ยว</h1>
+    <div class="sub">บันทึกผลผลิตจริง น้ำหนัก เกรด ราคาขาย และรายได้</div>
+  </div>
+  <div class="updated">อัปเดต 23/06/2026</div>
+</div>
+
+<div class="container">
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="lbl">ต้นที่เก็บได้ทั้งหมด</div>
+      <div class="val c-green">777 <span class="unit">ต้น</span></div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">ต้นเสีย</div>
+      <div class="val c-red">49 <span class="unit">ต้น</span></div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">อัตรารอดเฉลี่ย</div>
+      <div class="val c-blue">94.18 <span class="unit">%</span></div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">ผลผลิตรวม</div>
+      <div class="val c-gray">453.85 <span class="unit">กก.</span></div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">รายได้รวม</div>
+      <div class="val c-green">1,480 <span class="unit">บาท</span></div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-title">
+      🌾 บันทึกผลผลิต รอบที่ 1 — เก็บ 16/06/2026
+      <span class="sub">Zone 1</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>รอบ</th>
+          <th>วันเก็บ</th>
+          <th>Zone</th>
+          <th>ชนิดผัก</th>
+          <th>ตำแหน่ง</th>
+          <th class="right">ต้นที่ปลูก</th>
+          <th class="right">ต้นที่เก็บ</th>
+          <th class="right">ต้นเสีย</th>
+          <th>อัตรารอด</th>
+          <th class="right">น้ำหนักรวม (kg)</th>
+          <th class="right">น้ำหนักเฉลี่ย/ต้น (g)</th>
+          <th class="right">เกรด A</th>
+          <th class="right">เกรด B</th>
+          <th class="right">คัดทิ้ง</th>
+          <th class="right">ราคา/กก. (บ.)</th>
+          <th class="right">รายได้ (บ.)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td><td>16/06/2026</td><td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td>กรีนโอ๊ค</td><td>R1</td>
+          <td class="right">96</td><td class="right">90</td><td class="right">6</td>
+          <td><div class="surv-bar"><div class="bar-bg"><div class="bar-fill bar-high" style="width:94%"></div></div><span class="pct pct-high">93.75%</span></div></td>
+          <td class="right">18.50</td><td class="right">205.56</td>
+          <td class="right"><span class="badge badge-a">70</span></td>
+          <td class="right"><span class="badge badge-b">15</span></td>
+          <td class="right"><span class="badge badge-waste">5</span></td>
+          <td class="right">80.00</td>
+          <td class="right"><strong>1,480.00</strong></td>
+        </tr>
+        <tr>
+          <td>1</td><td>16/06/2026</td><td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td>มินิคนิอส (กรีนคูปอร์)</td><td>L</td>
+          <td class="right">95</td><td class="right">95</td><td class="right">1</td>
+          <td><div class="surv-bar"><div class="bar-bg"><div class="bar-fill bar-high" style="width:100%"></div></div><span class="pct pct-high">100.00%</span></div></td>
+          <td class="right">63.33</td><td class="right">666.63</td>
+          <td class="right">—</td><td class="right">—</td><td class="right">—</td>
+          <td class="right">—</td><td class="right">—</td>
+        </tr>
+        <tr>
+          <td>1</td><td>16/06/2026</td><td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td>ฟินเล่</td><td>L</td>
+          <td class="right">96</td><td class="right">82</td><td class="right">14</td>
+          <td><div class="surv-bar"><div class="bar-bg"><div class="bar-fill bar-mid" style="width:85%"></div></div><span class="pct pct-mid">85.42%</span></div></td>
+          <td class="right">57.00</td><td class="right">695.12</td>
+          <td class="right">—</td><td class="right">—</td><td class="right">—</td>
+          <td class="right">—</td><td class="right">—</td>
+        </tr>
+        <tr>
+          <td>1</td><td>16/06/2026</td><td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td>(ผักไม่ระบุชนิด)</td><td>L</td>
+          <td class="right">96</td><td class="right">94</td><td class="right">2</td>
+          <td><div class="surv-bar"><div class="bar-bg"><div class="bar-fill bar-high" style="width:98%"></div></div><span class="pct pct-high">97.92%</span></div></td>
+          <td class="right">50.05</td><td class="right">532.45</td>
+          <td class="right">—</td><td class="right">—</td><td class="right">—</td>
+          <td class="right">—</td><td class="right">—</td>
+        </tr>
+        <tr>
+          <td>1</td><td>16/06/2026</td><td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td>(ผักไม่ระบุชนิด)</td><td>C</td>
+          <td class="right">66</td><td class="right">65</td><td class="right">1</td>
+          <td><div class="surv-bar"><div class="bar-bg"><div class="bar-fill bar-high" style="width:98%"></div></div><span class="pct pct-high">98.48%</span></div></td>
+          <td class="right">65.33</td><td class="right">1,005.08</td>
+          <td class="right">—</td><td class="right">—</td><td class="right">—</td>
+          <td class="right">—</td><td class="right">—</td>
+        </tr>
+        <tr>
+          <td>1</td><td>16/06/2026</td><td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td>(ผักไม่ระบุชนิด)</td><td>C</td>
+          <td class="right">88</td><td class="right">85</td><td class="right">3</td>
+          <td><div class="surv-bar"><div class="bar-bg"><div class="bar-fill bar-high" style="width:97%"></div></div><span class="pct pct-high">96.59%</span></div></td>
+          <td class="right">50.16</td><td class="right">590.12</td>
+          <td class="right">—</td><td class="right">—</td><td class="right">—</td>
+          <td class="right">—</td><td class="right">—</td>
+        </tr>
+        <tr>
+          <td>1</td><td>16/06/2026</td><td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td>(ผักไม่ระบุชนิด)</td><td>C</td>
+          <td class="right">96</td><td class="right">85</td><td class="right">11</td>
+          <td><div class="surv-bar"><div class="bar-bg"><div class="bar-fill bar-mid" style="width:88%"></div></div><span class="pct pct-mid">88.54%</span></div></td>
+          <td class="right">39.16</td><td class="right">460.71</td>
+          <td class="right">—</td><td class="right">—</td><td class="right">—</td>
+          <td class="right">—</td><td class="right">—</td>
+        </tr>
+        <tr>
+          <td>1</td><td>16/06/2026</td><td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td>(ผักไม่ระบุชนิด)</td><td>R</td>
+          <td class="right">96</td><td class="right">91</td><td class="right">5</td>
+          <td><div class="surv-bar"><div class="bar-bg"><div class="bar-fill bar-high" style="width:95%"></div></div><span class="pct pct-high">94.79%</span></div></td>
+          <td class="right">60.16</td><td class="right">661.10</td>
+          <td class="right">—</td><td class="right">—</td><td class="right">—</td>
+          <td class="right">—</td><td class="right">—</td>
+        </tr>
+        <tr>
+          <td>1</td><td>16/06/2026</td><td><span class="zone-tag zone-1">Zone 1</span></td>
+          <td>(ผักไม่ระบุชนิด)</td><td>R</td>
+          <td class="right">96</td><td class="right">90</td><td class="right">6</td>
+          <td><div class="surv-bar"><div class="bar-bg"><div class="bar-fill bar-high" style="width:94%"></div></div><span class="pct pct-high">93.75%</span></div></td>
+          <td class="right">50.16</td><td class="right">557.33</td>
+          <td class="right">—</td><td class="right">—</td><td class="right">—</td>
+          <td class="right">—</td><td class="right">—</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5"><strong>รวมรอบที่ 1</strong></td>
+          <td class="right">825</td>
+          <td class="right">777</td>
+          <td class="right">49</td>
+          <td><strong class="c-green">94.18%</strong></td>
+          <td class="right"><strong>453.85</strong></td>
+          <td class="right">—</td>
+          <td class="right">70</td>
+          <td class="right">15</td>
+          <td class="right">5</td>
+          <td class="right">—</td>
+          <td class="right"><strong class="c-green">1,480.00</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+<script>
+if (window.self === window.top) {
+  var b = document.createElement('a');
+  b.href = 'index.html';
+  b.style = 'position:fixed;bottom:18px;right:18px;background:#111827;color:#fff;padding:9px 18px;border-radius:24px;font-size:12px;text-decoration:none;z-index:9999;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(0,0,0,.25);font-family:Sarabun,sans-serif;';
+  b.innerHTML = '🏠 กลับหน้าหลัก';
+  document.body.appendChild(b);
+}
+</script>
+</body>
+</html>

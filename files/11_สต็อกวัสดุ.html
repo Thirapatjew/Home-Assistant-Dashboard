@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11 สต็อกวัสดุ — ฟาร์มไฮโดรโปนิกส์</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sarabun', 'Segoe UI', sans-serif; background: #f5f6f8; color: #1a1a1a; font-size: 14px; }
+
+  .page-header { background: #fff; border-bottom: 1px solid #e4e6ea; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .page-header .icon { width: 32px; height: 32px; background: #b45309; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; flex-shrink: 0; }
+  .page-header h1 { font-size: 16px; font-weight: 600; }
+  .page-header .sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .updated { margin-left: auto; font-size: 11px; color: #9ca3af; background: #f9fafb; border: 1px solid #e4e6ea; border-radius: 6px; padding: 4px 10px; }
+
+  .container { padding: 20px 24px; }
+
+  .summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .sum-card { background: #fff; border-radius: 10px; border: 1px solid #e4e6ea; padding: 12px 14px; }
+  .sum-card .lbl { font-size: 11px; color: #6b7280; margin-bottom: 4px; }
+  .sum-card .val { font-size: 22px; font-weight: 700; }
+  .c-red { color: #dc2626; } .c-amber { color: #b45309; }
+  .c-green { color: #16a34a; } .c-gray { color: #374151; }
+
+  .table-wrap { background: #fff; border-radius: 12px; border: 1px solid #e4e6ea; overflow: hidden; margin-bottom: 20px; }
+  .table-title { padding: 14px 18px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #e4e6ea; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { background: #f9fafb; padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #e4e6ea; white-space: nowrap; }
+  thead th.right { text-align: right; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid #f0f1f3; color: #374151; vertical-align: middle; }
+  tbody td.right { text-align: right; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+
+  .badge { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+  .badge-green  { background: #dcfce7; color: #166534; }
+  .badge-amber  { background: #fef3c7; color: #92400e; }
+  .badge-red    { background: #fee2e2; color: #991b1b; }
+  .badge-gray   { background: #f3f4f6; color: #4b5563; }
+
+  .cat-tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 500; }
+  .cat-fert   { background: #d1fae5; color: #065f46; }
+  .cat-ph     { background: #dbeafe; color: #1e40af; }
+  .cat-seed   { background: #f3e8ff; color: #6b21a8; }
+  .cat-media  { background: #fef3c7; color: #92400e; }
+
+  .stock-bar { display: flex; align-items: center; gap: 6px; }
+  .bar-bg { width: 70px; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-ok   { background: #22c55e; }
+  .bar-warn { background: #f59e0b; }
+  .bar-low  { background: #ef4444; }
+
+  .num-warn { color: #b45309; font-weight: 700; }
+  .num-ok   { color: #16a34a; font-weight: 700; }
+  .num-low  { color: #dc2626; font-weight: 700; }
+
+  .row-warn { background: #fffbeb; }
+  .row-low  { background: #fff5f5; }
+  .row-group td { background: #f9fafb; font-weight: 600; font-size: 12px; color: #374151; padding: 7px 12px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="icon">📦</div>
+  <div>
+    <h1>11 สต็อกวัสดุและปัจจัยการผลิต</h1>
+    <div class="sub">ติดตามปุ๋ย A/B · สารปรับ pH · เมล็ดพันธุ์ · วัสดุเพาะ · จุดเตือนสต็อกต่ำ</div>
+  </div>
+  <div class="updated">อัปเดต 23/06/2026</div>
+</div>
+
+<div class="container">
+
+  <div class="summary-row">
+    <div class="sum-card">
+      <div class="lbl">รายการทั้งหมด</div>
+      <div class="val c-gray">23 <span style="font-size:12px;font-weight:400;color:#9ca3af;">รายการ</span></div>
+    </div>
+    <div class="sum-card">
+      <div class="lbl">สต็อกปกติ</div>
+      <div class="val c-green">18 <span style="font-size:12px;font-weight:400;color:#9ca3af;">รายการ</span></div>
+    </div>
+    <div class="sum-card">
+      <div class="lbl">ใกล้หมด (เตือน)</div>
+      <div class="val c-amber">3 <span style="font-size:12px;font-weight:400;color:#9ca3af;">รายการ</span></div>
+    </div>
+    <div class="sum-card">
+      <div class="lbl">หมดแล้ว / ต้องสั่ง</div>
+      <div class="val c-red">2 <span style="font-size:12px;font-weight:400;color:#9ca3af;">รายการ</span></div>
+    </div>
+  </div>
+
+  <!-- ===== ปุ๋ยและสารเคมี ===== -->
+  <div class="table-wrap">
+    <div class="table-title">🧪 ปุ๋ยและสารปรับสภาพน้ำ</div>
+    <table>
+      <thead>
+        <tr>
+          <th>รหัส</th>
+          <th>ชื่อรายการ</th>
+          <th>ประเภท</th>
+          <th>หน่วย</th>
+          <th class="right">คงเหลือ</th>
+          <th class="right">จุดเตือน</th>
+          <th class="right">ขั้นต่ำ</th>
+          <th>ระดับสต็อก</th>
+          <th>สถานะ</th>
+          <th>หมายเหตุ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>FERT-A</code></td>
+          <td><strong>ปุ๋ย A</strong></td>
+          <td><span class="cat-tag cat-fert">ปุ๋ย</span></td>
+          <td>ลิตร</td>
+          <td class="right num-ok">10</td>
+          <td class="right">3</td>
+          <td class="right">1</td>
+          <td>
+            <div class="stock-bar">
+              <div class="bar-bg"><div class="bar-fill bar-ok" style="width:100%"></div></div>
+              <span style="font-size:11px;color:#16a34a;">ดี</span>
+            </div>
+          </td>
+          <td><span class="badge badge-green">ปกติ</span></td>
+          <td>เติม 200 ml/วัน</td>
+        </tr>
+        <tr>
+          <td><code>FERT-B</code></td>
+          <td><strong>ปุ๋ย B</strong></td>
+          <td><span class="cat-tag cat-fert">ปุ๋ย</span></td>
+          <td>ลิตร</td>
+          <td class="right num-ok">10</td>
+          <td class="right">3</td>
+          <td class="right">1</td>
+          <td>
+            <div class="stock-bar">
+              <div class="bar-bg"><div class="bar-fill bar-ok" style="width:100%"></div></div>
+              <span style="font-size:11px;color:#16a34a;">ดี</span>
+            </div>
+          </td>
+          <td><span class="badge badge-green">ปกติ</span></td>
+          <td>เติม 200 ml/วัน</td>
+        </tr>
+        <tr>
+          <td><code>PH-UP</code></td>
+          <td><strong>pH Up (phup)</strong></td>
+          <td><span class="cat-tag cat-ph">ปรับ pH</span></td>
+          <td>ลิตร</td>
+          <td class="right num-ok">20</td>
+          <td class="right">5</td>
+          <td class="right">2</td>
+          <td>
+            <div class="stock-bar">
+              <div class="bar-bg"><div class="bar-fill bar-ok" style="width:100%"></div></div>
+              <span style="font-size:11px;color:#16a34a;">ดี</span>
+            </div>
+          </td>
+          <td><span class="badge badge-green">ปกติ</span></td>
+          <td>เพิ่มค่า pH</td>
+        </tr>
+        <tr>
+          <td><code>PH-DN</code></td>
+          <td><strong>pH Down</strong></td>
+          <td><span class="cat-tag cat-ph">ปรับ pH</span></td>
+          <td>ลิตร</td>
+          <td class="right num-ok">1</td>
+          <td class="right">2</td>
+          <td class="right">0.5</td>
+          <td>
+            <div class="stock-bar">
+              <div class="bar-bg"><div class="bar-fill bar-warn" style="width:40%"></div></div>
+              <span style="font-size:11px;color:#b45309;">ต่ำ</span>
+            </div>
+          </td>
+          <td><span class="badge badge-amber">ใกล้หมด</span></td>
+          <td>ใช้ 20 ml/วัน (23/06)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== เมล็ดพันธุ์ ===== -->
+  <div class="table-wrap">
+    <div class="table-title">🌱 สต็อกเมล็ดพันธุ์</div>
+    <table>
+      <thead>
+        <tr>
+          <th>รหัส</th>
+          <th>ชื่อรายการ</th>
+          <th>สายพันธุ์</th>
+          <th>หน่วย</th>
+          <th class="right">คงเหลือ (รอบ)</th>
+          <th class="right">จุดเตือน</th>
+          <th class="right">ขั้นต่ำ</th>
+          <th>ระดับสต็อก</th>
+          <th>สถานะ</th>
+          <th>หมายเหตุ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-group"><td colspan="10">กลุ่มผักกาดโอ๊ค</td></tr>
+        <tr>
+          <td><code>SD-GRO</code></td><td><strong>กรีนโอ๊ค</strong></td><td>ฟินิกรนท์</td><td>รอบ</td>
+          <td class="right num-ok">43</td><td class="right">4</td><td class="right">2</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-ok" style="width:100%"></div></div><span style="font-size:11px;color:#16a34a;">ดี</span></div></td>
+          <td><span class="badge badge-green">ปกติ</span></td><td>ผักหลัก · งอกดี</td>
+        </tr>
+        <tr>
+          <td><code>SD-RDO</code></td><td><strong>เรดโอ๊ค</strong></td><td>มักเกิ้ล</td><td>รอบ</td>
+          <td class="right num-ok">43</td><td class="right">4</td><td class="right">2</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-ok" style="width:100%"></div></div><span style="font-size:11px;color:#16a34a;">ดี</span></div></td>
+          <td><span class="badge badge-green">ปกติ</span></td><td>งอกจริง 63% — เพาะเผื่อ</td>
+        </tr>
+
+        <tr class="row-group"><td colspan="10">กลุ่มบัตเตอร์เฮด</td></tr>
+        <tr>
+          <td><code>SD-BHG</code></td><td><strong>บัตเตอร์เฮด</strong></td><td>ทวิน</td><td>รอบ</td>
+          <td class="right num-ok">242</td><td class="right">1.5</td><td class="right">42.5</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-ok" style="width:100%"></div></div><span style="font-size:11px;color:#16a34a;">ดี</span></div></td>
+          <td><span class="badge badge-green">ปกติ</span></td><td>หัวแน่น น้ำหนักดี</td>
+        </tr>
+        <tr>
+          <td><code>SD-BHR</code></td><td><strong>บัตเตอร์เฮดแดง</strong></td><td>—</td><td>รอบ</td>
+          <td class="right num-ok">1</td><td class="right">43</td><td class="right">1</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-warn" style="width:20%"></div></div><span style="font-size:11px;color:#b45309;">ต่ำ</span></div></td>
+          <td><span class="badge badge-amber">ใกล้หมด</span></td><td>สีแดงขึ้นกับแสง</td>
+        </tr>
+
+        <tr class="row-group"><td colspan="10">กลุ่มโครอล</td></tr>
+        <tr>
+          <td><code>SD-GRC</code></td><td><strong>กรีนโครอล</strong></td><td>กรีนบับเบิ้ล</td><td>รอบ</td>
+          <td class="right num-ok">43</td><td class="right">1</td><td class="right">43</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-ok" style="width:100%"></div></div><span style="font-size:11px;color:#16a34a;">ดี</span></div></td>
+          <td><span class="badge badge-green">ปกติ</span></td><td>ใบหยิก</td>
+        </tr>
+        <tr>
+          <td><code>SD-RDC</code></td><td><strong>เรดโครอล</strong></td><td>เดวิล</td><td>รอบ</td>
+          <td class="right num-ok">23</td><td class="right">23.6</td><td class="right">24</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-warn" style="width:60%"></div></div><span style="font-size:11px;color:#b45309;">เฝ้าระวัง</span></div></td>
+          <td><span class="badge badge-amber">ใกล้หมด</span></td><td>งอกดี 98%</td>
+        </tr>
+
+        <tr class="row-group"><td colspan="10">กลุ่มคอส</td></tr>
+        <tr>
+          <td><code>SD-GCS</code></td><td><strong>กรีนคอส</strong></td><td>กรีนไอวี่</td><td>รอบ</td>
+          <td class="right num-ok">33</td><td class="right">24</td><td class="right">34</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-ok" style="width:80%"></div></div><span style="font-size:11px;color:#16a34a;">ดี</span></div></td>
+          <td><span class="badge badge-green">ปกติ</span></td><td>ทรงสูง</td>
+        </tr>
+        <tr>
+          <td><code>SD-RCS</code></td><td><strong>เรดคอส</strong></td><td>แจสเปอร์</td><td>รอบ</td>
+          <td class="right num-ok">24</td><td class="right">14</td><td class="right">24</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-ok" style="width:70%"></div></div><span style="font-size:11px;color:#16a34a;">ดี</span></div></td>
+          <td><span class="badge badge-green">ปกติ</span></td><td>ทรงสูง สีแดง</td>
+        </tr>
+
+        <tr class="row-group"><td colspan="10">กลุ่มปัตตาเวีย</td></tr>
+        <tr>
+          <td><code>SD-RPT</code></td><td><strong>เรดปัตตาเวีย</strong></td><td>เรดสการ์รต</td><td>รอบ</td>
+          <td class="right num-low">0</td><td class="right">4</td><td class="right">14</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-low" style="width:0%"></div></div><span style="font-size:11px;color:#dc2626;">หมด</span></div></td>
+          <td><span class="badge badge-red">ต้องสั่งซื้อ</span></td><td>ใบหยัก สีแดง</td>
+        </tr>
+        <tr>
+          <td><code>SD-GPT</code></td><td><strong>กรีนปัตตาเวีย</strong></td><td>กริฟฟิน</td><td>รอบ</td>
+          <td class="right num-low">0</td><td class="right">4</td><td class="right">14</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-low" style="width:0%"></div></div><span style="font-size:11px;color:#dc2626;">หมด</span></div></td>
+          <td><span class="badge badge-red">ต้องสั่งซื้อ</span></td><td></td>
+        </tr>
+
+        <tr class="row-group"><td colspan="10">กลุ่มมินิคอส</td></tr>
+        <tr>
+          <td><code>SD-MNG</code></td><td><strong>มินิคนิอส</strong></td><td>กรีนคูปอร์</td><td>รอบ</td>
+          <td class="right num-ok">14</td><td class="right">14</td><td class="right">8</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-ok" style="width:60%"></div></div><span style="font-size:11px;color:#16a34a;">ดี</span></div></td>
+          <td><span class="badge badge-green">ปกติ</span></td><td></td>
+        </tr>
+        <tr>
+          <td><code>SD-MNR</code></td><td><strong>มินิคนิอสแดง</strong></td><td>เรดคูปอร์</td><td>รอบ</td>
+          <td class="right num-ok">14</td><td class="right">14</td><td class="right">8</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-ok" style="width:60%"></div></div><span style="font-size:11px;color:#16a34a;">ดี</span></div></td>
+          <td><span class="badge badge-green">ปกติ</span></td><td></td>
+        </tr>
+
+        <tr class="row-group"><td colspan="10">กลุ่มฟิลเลย์</td></tr>
+        <tr>
+          <td><code>SD-FLG</code></td><td><strong>ฟิลเลย์ (กรีนสเตล่า)</strong></td><td>กรีนสเตล่า</td><td>รอบ</td>
+          <td class="right num-ok">14</td><td class="right">14</td><td class="right">8</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-ok" style="width:60%"></div></div><span style="font-size:11px;color:#16a34a;">ดี</span></div></td>
+          <td><span class="badge badge-green">ปกติ</span></td><td>ใบหยัก</td>
+        </tr>
+        <tr>
+          <td><code>SD-FLM</code></td><td><strong>ฟิลเลย์ (เมแกน)</strong></td><td>เมแกน</td><td>รอบ</td>
+          <td class="right num-ok">14</td><td class="right">14</td><td class="right">8</td>
+          <td><div class="stock-bar"><div class="bar-bg"><div class="bar-fill bar-ok" style="width:60%"></div></div><span style="font-size:11px;color:#16a34a;">ดี</span></div></td>
+          <td><span class="badge badge-green">ปกติ</span></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== วัสดุเพาะ ===== -->
+  <div class="table-wrap">
+    <div class="table-title">🧽 วัสดุเพาะและอุปกรณ์</div>
+    <table>
+      <thead>
+        <tr>
+          <th>รหัส</th>
+          <th>ชื่อรายการ</th>
+          <th>ประเภท</th>
+          <th>หน่วย</th>
+          <th class="right">คงเหลือ</th>
+          <th class="right">จุดเตือน</th>
+          <th class="right">ขั้นต่ำ</th>
+          <th>ระดับสต็อก</th>
+          <th>สถานะ</th>
+          <th>หมายเหตุ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>MD-FOM</code></td>
+          <td><strong>ฟองน้ำเพาะกล้า</strong></td>
+          <td><span class="cat-tag cat-media">วัสดุเพาะ</span></td>
+          <td>แผ่น</td>
+          <td class="right num-ok">36</td>
+          <td class="right">10</td>
+          <td class="right">5</td>
+          <td>
+            <div class="stock-bar">
+              <div class="bar-bg"><div class="bar-fill bar-ok" style="width:100%"></div></div>
+              <span style="font-size:11px;color:#16a34a;">ดี</span>
+            </div>
+          </td>
+          <td><span class="badge badge-green">ปกติ</span></td>
+          <td>วัสดุเพาะหลัก</td>
+        </tr>
+        <tr>
+          <td><code>MD-RWL</code></td>
+          <td><strong>ร็อควูล</strong></td>
+          <td><span class="cat-tag cat-media">วัสดุเพาะ</span></td>
+          <td>แผ่น</td>
+          <td class="right num-ok">—</td>
+          <td class="right">5</td>
+          <td class="right">2</td>
+          <td>
+            <div class="stock-bar">
+              <div class="bar-bg"><div class="bar-fill bar-gray" style="width:50%;background:#d1d5db;"></div></div>
+              <span style="font-size:11px;color:#6b7280;">ไม่ระบุ</span>
+            </div>
+          </td>
+          <td><span class="badge badge-gray">ไม่ระบุ</span></td>
+          <td>สำรอง</td>
+        </tr>
+        <tr>
+          <td><code>MD-PMS</code></td>
+          <td><strong>พีทมอส</strong></td>
+          <td><span class="cat-tag cat-media">วัสดุเพาะ</span></td>
+          <td>กก.</td>
+          <td class="right num-ok">—</td>
+          <td class="right">2</td>
+          <td class="right">1</td>
+          <td>
+            <div class="stock-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:50%;background:#d1d5db;"></div></div>
+              <span style="font-size:11px;color:#6b7280;">ไม่ระบุ</span>
+            </div>
+          </td>
+          <td><span class="badge badge-gray">ไม่ระบุ</span></td>
+          <td>สำรอง</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+<script>
+if (window.self === window.top) {
+  var b = document.createElement('a');
+  b.href = 'index.html';
+  b.style = 'position:fixed;bottom:18px;right:18px;background:#111827;color:#fff;padding:9px 18px;border-radius:24px;font-size:12px;text-decoration:none;z-index:9999;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(0,0,0,.25);font-family:Sarabun,sans-serif;';
+  b.innerHTML = '🏠 กลับหน้าหลัก';
+  document.body.appendChild(b);
+}
+</script>
+</body>
+</html>
